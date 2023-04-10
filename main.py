@@ -1,5 +1,6 @@
 from stockfish import Stockfish
 import argparse
+import chess
 
 parser = argparse.ArgumentParser("stockfish")
 parser.add_argument("-f", metavar="--fen", help="fen string representing the current position", type=str)
@@ -20,10 +21,34 @@ else:
     exit()
 
 
+# get move in san (short algebraic notation) from lan (long algebraic notation)
+def san(lan):
+    san = ""
+    start = lan[0:2]
+    end = lan[2:4]
+
+    piece = stockfish.get_what_is_on_square(start)
+    if piece in (Stockfish.Piece.WHITE_QUEEN, Stockfish.Piece.BLACK_QUEEN):
+        san = "Q" 
+    if piece in (Stockfish.Piece.WHITE_KING, Stockfish.Piece.BLACK_KING):
+        san = "K" 
+    if piece in (Stockfish.Piece.WHITE_KNIGHT, Stockfish.Piece.BLACK_KNIGHT):
+        san = "N" 
+    if piece in (Stockfish.Piece.WHITE_BISHOP, Stockfish.Piece.BLACK_BISHOP):
+        san = "B" 
+    if piece in (Stockfish.Piece.WHITE_ROOK, Stockfish.Piece.BLACK_ROOK):
+        san = "R" 
+
+    if stockfish.will_move_be_a_capture(lan) in (Stockfish.Capture.DIRECT_CAPTURE, Stockfish.Capture.EN_PASSANT):
+        san += "x"
+
+    san += end
+    return san
+
 moves = stockfish.get_top_moves(n_moves)
 print("Best moves")
 for i in range(len(moves)):
-    move = moves[i]["Move"]
+    move = san(moves[i]["Move"])
     centipawn = moves[i]["Centipawn"] / 100
     if centipawn > 0:
         centipawn = f"+{centipawn}"

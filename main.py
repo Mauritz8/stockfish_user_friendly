@@ -1,18 +1,18 @@
+import sys
 from stockfish import Stockfish
 import argparse
-import chess
 
 parser = argparse.ArgumentParser("stockfish")
 parser.add_argument("-f", metavar="--fen", help="fen string representing the current position", type=str)
 parser.add_argument("-d", metavar="--depth", help="search depth stockfish should use", type=int)
 parser.add_argument("-n", help="Find the top n moves", type=int)
-args = parser.parse_args()
+args = parser.parse_args(args=None if sys.argv[1:] else ['--help'])
 
 fen = args.f
 depth = args.d
 n_moves = args.n
 
-stockfish = Stockfish(path="/home/mauritz/Documents/code/stockfish_15/stockfish-ubuntu-20.04-x86-64", depth=depth)
+stockfish = Stockfish(path="/home/mauritz/Documents/stockfish-16/src/stockfish", depth=depth)
 
 if stockfish.is_fen_valid(fen):
     stockfish.set_fen_position(fen)
